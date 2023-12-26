@@ -1,9 +1,10 @@
-# game setup
+# game setup (width and height for game window)
 WIDTH    = 1280	
 HEIGHT   = 720
 FPS      = 60
 TILESIZE = 64
 
+# p for player, x for obstacle
 WORLD_MAP = [
 ['x','x','x','x','x','x','x','x','x','x','x','x','x','x','x','x','x','x','x','x'],
 ['x',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','x'],
