@@ -61,6 +61,7 @@ class YSortCameraGroup(pygame.sprite.Group):
 
         # for every sprite, offset it's position
         # subtract player movement from it's pos so obstacles look like they're moving away
-        for sprite in self.sprites():
+        # sorted accounts for what sprite should be drawn first
+        for sprite in sorted(self.sprites(), key = lambda sprite : sprite.rect.centery):
             offset_position = sprite.rect.topleft - self.offset_cam
             self.display_surface.blit(sprite.image, offset_position)
