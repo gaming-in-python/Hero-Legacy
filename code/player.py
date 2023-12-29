@@ -58,7 +58,7 @@ class Player(pygame.sprite.Sprite):
                 if sprite.hitbox.colliderect(self.hitbox):
                     if self.direction.y > 0: #moving down
                         self.hitbox.bottom = sprite.hitbox.top
-                    if self.direction.y < 1: #moving up
+                    if self.direction.y < 0: #moving up
                         self.hitbox.top = sprite.hitbox.bottom
 
     def update(self):
