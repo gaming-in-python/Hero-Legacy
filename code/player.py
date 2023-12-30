@@ -1,4 +1,4 @@
-import pygame
+import pygame 
 from settings import *
 
 class Player(pygame.sprite.Sprite):
@@ -43,7 +43,6 @@ class Player(pygame.sprite.Sprite):
         self.hitbox.y += self.direction.y * speed
         self.collision('vertical')
         self.rect.center = self.hitbox.center
-
 
     def collision(self, direction):
         if direction == 'horizontal':
