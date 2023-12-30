@@ -54,6 +54,7 @@ class Level:
         # update and draw the game
         self.visibles.custom_draw(self.player)
         self.visibles.update()
+        debug(self.player.status)
 
 # camera group - player is in middle of window by adding an offset to the player's pos
 # Y sort: sorting sprites by the y-coord
