@@ -28,5 +28,5 @@ class Level:
 
     def run(self):
         self.visibles.draw(self.display_surface)
-
+        debug(self.player.status)
     
