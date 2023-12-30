@@ -1,5 +1,6 @@
 import pygame 
 from settings import *
+from support import *
 
 class Player(pygame.sprite.Sprite):
     def __init__(self, pos, groups, obstacles):
@@ -33,8 +34,10 @@ class Player(pygame.sprite.Sprite):
         # set direction based on key pressed
         if keys[pygame.K_RIGHT] or keys[pygame.K_d]:
             self.direction.x = 1
+            self.status = "right"
         elif keys[pygame.K_LEFT] or keys[pygame.K_a]:
             self.direction.x = -1
+            self.status = "left"
         else:
             # if no x-dir key pressed, no movement
             # resets x-dir to 0 when you stop pressing key (otherwise player would keep moving in previous direction)
@@ -42,19 +45,21 @@ class Player(pygame.sprite.Sprite):
 
         if keys[pygame.K_UP] or keys[pygame.K_w]:
             self.direction.y = -1
+            self.status = "up"
         elif keys[pygame.K_DOWN] or keys[pygame.K_s]:
             self.direction.y = 1
+            self.status = "down"
         else:
             self.direction.y = 0
 
          #attack (Because who uses spacebar for anything but jump??)
-        if press[pygame.K_j] and not self.attacking:
+        if keys[pygame.K_j] and not self.attacking:
             self.attacking = True
             self.attack_time = pygame.time.get_ticks()
             print("attack")
 
         #magic
-        if press[pygame.K_k] and not self.attacking:
+        if keys[pygame.K_k] and not self.attacking:
             self.attacking = True
             self.attack_time = pygame.time.get_ticks()
             print("magic")
@@ -87,7 +92,7 @@ class Player(pygame.sprite.Sprite):
 
     #getting all animation assets
     def import_player_assets(self):
-        general_path = '.../graphics/player/'
+        general_path = '../graphics/player/'
         
         #animations in dictionary include moving, being idle and attacking in all 4 directions
         self.animations = {'up' : [], 
@@ -140,20 +145,19 @@ class Player(pygame.sprite.Sprite):
     
     #connecting inputs to animations
     def animate(self):
-        animation = self.animation[self.status]
-
+        animation = self.animations[self.status]
         self.frame_index += self.animation_speed
         if self.frame_index >= len(animation):
             self.frame_index = 0
-        
+        print(self.frame_index)
         self.image = animation[int(self.frame_index)]
         self.rect = self.image.get_rect(center = self.hitbox.center)
 
-    #updating all components
+    #updating all player variables
     def update(self):
         self.input()
         self.move(self.speed)
 
          # self.get_status() 
         self.animate()
-        self.move(self.speed)
+    
