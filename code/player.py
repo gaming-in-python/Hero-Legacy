@@ -9,10 +9,6 @@ class Player(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(topleft = pos)
         # player hitbox
         self.hitbox = self.rect.inflate(0, -26)
-        # direction - 2d vector
-        # get keyboard input and then multiply by speed to determine motion
-        self.direction = pygame.math.Vector2()
-        self.speed = 5
         self.obstacles = obstacles
 
         #graphics setup
@@ -156,8 +152,8 @@ class Player(pygame.sprite.Sprite):
     #updating all player variables
     def update(self):
         self.input()
-        self.move(self.speed)
-
-         # self.get_status() 
+        self.cooldowns()
+        self.get_status()
         self.animate()
+        self.move(self.speed)
     
