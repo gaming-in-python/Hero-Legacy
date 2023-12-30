@@ -5,6 +5,7 @@ from player import Player
 from debug import debug
 from support import *
 from random import choice
+from weapon import Weapon
 class Level:
     def __init__(self):
         # get the display surface 
@@ -17,9 +18,12 @@ class Level:
         # sprite setup
         self.create_map()
 
+        #attack sprites
+        self.current_attack = None
+
     def create_map(self):
         # Placing player in top left of map 
-        self.player = Player((500, 500), [self.visibles], self.obstacles)
+        self.player = Player((500, 500), [self.visibles], self.obstacles, self.create_attack, self.destroy_attack)
 
         layouts = {
             'boundary': import_csv_layout('../map/zelda_ground2_Border.csv'),
@@ -49,7 +53,16 @@ class Level:
                         if style == 'object' :
                             #surf = graphics['objects'][int(col)]
                             Tile((x,y), [self.obstacles], 'object')
+        
+    
+    def create_attack(self):
+         self.current_attack = Weapon(self.player, [self.visibles]) 
 
+    def destroy_attack(self):
+         if self.current_attack:
+              self.current_attack.kill()
+              self.current_attack = None
+         
     def run(self):
         # update and draw the game
         self.visibles.custom_draw(self.player)

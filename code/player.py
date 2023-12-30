@@ -3,7 +3,7 @@ from settings import *
 from support import *
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self, pos, groups, obstacles):
+    def __init__(self, pos, groups, obstacles, create_attack, destroy_attack):
         super().__init__(groups)
         self.image = pygame.image.load('../graphics/test/player.png').convert_alpha()
         self.rect = self.image.get_rect(topleft = pos)
@@ -24,6 +24,14 @@ class Player(pygame.sprite.Sprite):
         self.attack_cooldown = 400
         self.attack_time = None
 
+
+        self.create_attack = create_attack
+        self.destroy_attack = destroy_attack
+        self.weapon_idx = 0
+        self.weapon = list(weapon_data.keys())[self.weapon_idx]
+        self.can_switch_weapon = True
+        self.weapon_switch_time = None
+        self.switch_duration_cooldown = 200
     # method to get keyboard input
     def input(self):
         keys = pygame.key.get_pressed() # get all the keys that are potentially being pressed
@@ -53,12 +61,22 @@ class Player(pygame.sprite.Sprite):
             self.attacking = True
             self.attack_time = pygame.time.get_ticks()
             print("attack")
+            self.create_attack()
 
         #magic
         if keys[pygame.K_k] and not self.attacking:
             self.attacking = True
             self.attack_time = pygame.time.get_ticks()
             print("magic")
+
+        if keys[pygame.K_q] and self.can_switch_weapon:
+            self.can_switch_weapon = False
+            self.weapon_switch_time = pygame.time.get_ticks()
+            if self.weapon_idx < len(list(weapon_data.keys())) - 1:
+                self.weapon_idx +=1
+            else:
+                self.weapon_idx =0
+            self.weapon = list(weapon_data.keys())[self.weapon_idx]
     
     def move(self, speed):
         if self.direction.magnitude() != 0: #vector of 0 cant be normalized!
@@ -138,6 +156,11 @@ class Player(pygame.sprite.Sprite):
         if self.attacking:
             if current_time - self.attack_time >= self.attack_cooldown:
                 self.attacking = False
+                self.destroy_attack() 
+
+        if not self.can_switch_weapon:
+            if current_time - self.weapon_switch_time >= self.switch_duration_cooldown:
+                self.can_switch_weapon = True
     
     #connecting inputs to animations
     def animate(self):
