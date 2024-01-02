@@ -19,7 +19,6 @@ class Player(pygame.sprite.Sprite):
 
         #movement variables to help control parsing the input
         self.direction = pygame.math.Vector2()
-        self.speed = 5
         self.attacking = False
         self.attack_cooldown = 400
         self.attack_time = None
@@ -32,6 +31,16 @@ class Player(pygame.sprite.Sprite):
         self.can_switch_weapon = True
         self.weapon_switch_time = None
         self.switch_duration_cooldown = 200
+
+        #map each stat to a max value
+        self.stats = {'health': 100, 'energy': 60, 'attack': 10, 'magic': 4, 'speed': 6}
+        #initialize values that will change to their max
+        self.health = self.stats['health'] *0.5
+        self.energy = self.stats['energy'] *0.3
+        self.speed = self.stats['speed']
+        self.exp = 100
+
+
     # method to get keyboard input
     def input(self):
         keys = pygame.key.get_pressed() # get all the keys that are potentially being pressed
