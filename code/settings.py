@@ -4,13 +4,33 @@ HEIGHT   = 720
 FPS      = 60
 TILESIZE = 64
 
+#ui
+BAR_HEIGHT = 20
+HEALTH_BAR_WIDTH = 200
+ENERGY_BAR_WIDTH = 120
+ITEM_BOX_SIZE = 80
+UI_FONT = '../graphics/font/joystix.ttf'
+UI_FONT_SIZE = 18
+UI_BORDER_WEIGHT = 3
+
+#colors
+WATER_COLOR = '#71ddee'
+UI_BG_COLOR = '#4d4b4b' #black
+UI_BORDER_COLOR = '#111111' #black
+TEXT_COLOR = '#EEEEEE' #white
+
+HEALTH_COLOR = 'red'
+ENERGY_COLOR = 'blue'
+UI_BORDER_COLOR_ACTIVE = 'gold'
+
+
 #weapons data
 weapon_data = {
-    'sword' : {'cooldown':100, 'damage':15, 'graphic':'../grpahics/weapons/sword/full.png'},
-    'lance' : {'cooldown':400, 'damage':30, 'graphic':'../grpahics/weapons/lance/full.png'},
-    'axe' : {'cooldown':300, 'damage':20, 'graphic':'../grpahics/weapons/axe/full.png'},
-    'rapier' : {'cooldown':50, 'damage':8, 'graphic':'../grpahics/weapons/rapier/full.png'},
-    'sai' : {'cooldown':80, 'damage':10, 'graphic':'../grpahics/weapons/sai/full.png'},
+    'sword' : {'cooldown':100, 'damage':15, 'graphic':'../graphics/weapons/sword/full.png'},
+    'lance' : {'cooldown':400, 'damage':30, 'graphic':'../graphics/weapons/lance/full.png'},
+    'axe' : {'cooldown':300, 'damage':20, 'graphic':'../graphics/weapons/axe/full.png'},
+    'rapier' : {'cooldown':50, 'damage':8, 'graphic':'../graphics/weapons/rapier/full.png'},
+    'sai' : {'cooldown':80, 'damage':10, 'graphic':'../graphics/weapons/sai/full.png'},
 }
 # p for player, x for obstacle
 WORLD_MAP = [

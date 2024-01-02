@@ -6,6 +6,7 @@ from debug import debug
 from support import *
 from random import choice
 from weapon import Weapon
+from ui import UI
 class Level:
     def __init__(self):
         # get the display surface 
@@ -21,9 +22,12 @@ class Level:
         #attack sprites
         self.current_attack = None
 
+        #user interface
+        self.ui = UI()
+
     def create_map(self):
         # Placing player in top left of map 
-        self.player = Player((500, 500), [self.visibles], self.obstacles, self.create_attack, self.destroy_attack)
+        self.player = Player((650, 500), [self.visibles], self.obstacles, self.create_attack, self.destroy_attack)
 
         layouts = {
             'boundary': import_csv_layout('../map/zelda_ground2_Border.csv'),
@@ -68,6 +72,7 @@ class Level:
         self.visibles.custom_draw(self.player)
         self.visibles.update()
         debug(self.player.status)
+        self.ui.display(self.player)
 
 # camera group - player is in middle of window by adding an offset to the player's pos
 # Y sort: sorting sprites by the y-coord
