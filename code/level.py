@@ -27,7 +27,13 @@ class Level:
 
     def create_map(self):
         # Placing player in top left of map 
-        self.player = Player((650, 500), [self.visibles], self.obstacles, self.create_attack, self.destroy_attack)
+        self.player = Player(
+             (650, 500), 
+             [self.visibles], 
+             self.obstacles, 
+             self.create_attack, 
+             self.destroy_attack,
+             self.create_magic)
 
         layouts = {
             'boundary': import_csv_layout('../map/zelda_ground2_Border.csv'),
@@ -61,6 +67,11 @@ class Level:
     
     def create_attack(self):
          self.current_attack = Weapon(self.player, [self.visibles]) 
+
+    def create_magic(self, style, strength, cost):
+         print(style)
+         print(strength)
+         print(cost)
 
     def destroy_attack(self):
          if self.current_attack:
