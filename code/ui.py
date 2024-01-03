@@ -10,11 +10,16 @@ class UI:
         self.health_bar_rect = pygame.Rect(10, 10, HEALTH_BAR_WIDTH, BAR_HEIGHT)
         self.energy_bar_rect = pygame.Rect(10, BAR_HEIGHT + 20, ENERGY_BAR_WIDTH, BAR_HEIGHT)
 
-        #create list of weapon graphics
-        self.weapon_graphics = []
-        for weapon in weapon_data.values():
-            weapon = pygame.image.load(weapon['graphic']).convert_alpha()
-            self.weapon_graphics.append(weapon)
+        self.weapon_graphics = self.load_graphics(weapon_data)
+        self.magic_graphics = self.load_graphics(magic_data)
+
+    #creates list of graphics for given dictionary
+    def load_graphics(self, data):
+        graphics = []
+        for item in data.values():
+            graphic = pygame.image.load(item['graphic']).convert_alpha()
+            graphics.append(graphic)
+        return graphics
 
     #draw a stat bar in top left of screen
     def show_bar(self, current_amount, max_amount, bg_rect, color):
@@ -49,19 +54,19 @@ class UI:
         else:
             pygame.draw.rect(self.display_surface, UI_BORDER_COLOR, bg_rect, UI_BORDER_WEIGHT)
         return bg_rect
-
-    #put image of current weapon in bottom left of screen
-    def weapon_overlay(self, weapon_index, is_switching):
-        bg_rect = self.selection_box(10, self.display_surface.get_size()[1] - ITEM_BOX_SIZE - 20, is_switching)
-        weapon_surf = self.weapon_graphics[weapon_index]
-        weapon_rect = weapon_surf.get_rect(center = bg_rect.center)
-        self.display_surface.blit(weapon_surf, weapon_rect)
+    
+    #displays current items being used in bottom left
+    def overlay(self, item_index, graphics, is_switching, box_idx):
+        bg_rect = self.selection_box(10 + box_idx * (ITEM_BOX_SIZE - UI_BORDER_WEIGHT), 
+                                     self.display_surface.get_size()[1] - ITEM_BOX_SIZE - (20 - (box_idx * 5)),
+                                       is_switching)
+        surf = graphics[item_index]
+        rect = surf.get_rect(center = bg_rect.center)
+        self.display_surface.blit(surf, rect)
 
     def display(self, player):
         self.show_bar(player.health, player.stats['health'], self.health_bar_rect, HEALTH_COLOR)
         self.show_bar(player.energy, player.stats['energy'], self.energy_bar_rect, ENERGY_COLOR)
-
         self.show_exp(player.exp)
-
-        self.weapon_overlay(player.weapon_idx, not player.can_switch_weapon)
-        #self.selection_box(10 + ITEM_BOX_SIZE - UI_BORDER_WEIGHT, self.display_surface.get_size()[1] - ITEM_BOX_SIZE - 15)
+        self.overlay(player.weapon_idx, self.weapon_graphics, not player.can_switch_weapon, 0)
+        self.overlay(player.magic_idx, self.magic_graphics, not player.can_switch_magic, 1)
