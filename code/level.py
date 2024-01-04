@@ -7,6 +7,8 @@ from support import *
 from random import choice
 from weapon import Weapon
 from ui import UI
+from enemy import Enemy
+
 class Level:
     def __init__(self):
         # get the display surface 
@@ -26,28 +28,24 @@ class Level:
         self.ui = UI()
 
     def create_map(self):
-        # Placing player in top left of map 
-        self.player = Player(
-             (650, 500), 
-             [self.visibles], 
-             self.obstacles, 
-             self.create_attack, 
-             self.destroy_attack,
-             self.create_magic)
-
         layouts = {
-            'boundary': import_csv_layout('../map/zelda_ground2_Border.csv'),
-            'grass' : import_csv_layout('../map/zelda_ground2_Grass.csv'),
-            'object': import_csv_layout('../map/zelda_ground2_Trees.csv')
+            # 'boundary': import_csv_layout('../map/zelda_ground2_Border.csv'),
+            # 'grass' : import_csv_layout('../map/zelda_ground2_Grass.csv'),
+            # 'object': import_csv_layout('../map/zelda_ground2_Trees.csv'),
+            # 'entities': import_csv_layout('../map/zelda_ground2_Entities.csv')
+            'boundary': import_csv_layout('../map/map_FloorBlocks.csv'),
+			'grass': import_csv_layout('../map/map_Grass.csv'),
+			'object': import_csv_layout('../map/map_Objects.csv'),
+			'entities': import_csv_layout('../map/map_Entities.csv')
         }
 
         graphics = {
             'grass' : import_folder('../graphics/Grass'),
-            'objects' : import_folder('../graphics/Grass')
+            'objects' : import_folder('../graphics/objects')
         }
 
         #first iteration is style = boundary and layout = returned list from import_csv_layout
-        for style, layout in layouts.items() :
+        for style, layout in layouts.items() : 
             for row_index,row in enumerate(layout): 
                 for col_index,col in enumerate(row) :
                     if col != '-1' :
@@ -58,12 +56,31 @@ class Level:
                             Tile((x,y), [self.obstacles], 'invisible')
                         if style == 'grass' :
                             #create grass tile with a random grass image surafce and make it an obstacle
-                            #random_grass_img = choice(graphics['grass'])
-                            Tile((x,y), [self.obstacles], 'grass')
+                            # random_grass_img = choice(graphics['grass'])
+                            # Tile((x,y), [self.obstacles], 'grass')
+                            random_grass_image = choice(graphics['grass'])
+                            Tile((x,y),[self.visibles,self.obstacles],'grass',random_grass_image)
                         if style == 'object' :
                             #surf = graphics['objects'][int(col)]
-                            Tile((x,y), [self.obstacles], 'object')
-        
+                            #Tile((x,y), [self.obstacles], 'object')
+                            surf = graphics['objects'][int(col)]
+                            Tile((x,y),[self.visibles,self.obstacles],'object',surf)
+                        if style == 'entities' :
+                            if col == '394' :
+                                  self.player = Player(
+                                       (x,y),
+                                       [self.visibles],
+                                       self.obstacles,
+                                       self.create_attack,
+                                       self.destroy_attack,
+                                       self.create_magic)
+                            else :
+                                 if col == '390' : monster_name = 'bamboo'
+                                 elif col == '391' : monster_name = 'spirit'
+                                 elif col == '392' : monster_name = 'raccoon'
+                                 else : monster_name = 'squid'
+                                 Enemy(monster_name, (x,y), [self.visibles], self.obstacles)
+                             
     
     def create_attack(self):
          self.current_attack = Weapon(self.player, [self.visibles]) 
@@ -74,49 +91,57 @@ class Level:
          print(cost)
 
     def destroy_attack(self):
-         if self.current_attack:
+        if self.current_attack:
               self.current_attack.kill()
-              self.current_attack = None
+        self.current_attack = None
          
     def run(self):
         # update and draw the game
         self.visibles.custom_draw(self.player)
         self.visibles.update()
+        self.visibles.enemy_update(self.player)
         debug(self.player.status)
         self.ui.display(self.player)
 
 # camera group - player is in middle of window by adding an offset to the player's pos
 # Y sort: sorting sprites by the y-coord
 class YSortCameraGroup(pygame.sprite.Group):
-	def __init__(self):
-		# general setup 
-		super().__init__()
+    def __init__(self):
+        # general setup 
+        super().__init__()
         # get pos for center of window, floored
-		self.display_surface = pygame.display.get_surface()
-		self.half_width = self.display_surface.get_size()[0] // 2
-		self.half_height = self.display_surface.get_size()[1] // 2
+        self.display_surface = pygame.display.get_surface()
+        self.half_width = self.display_surface.get_size()[0] // 2
+        self.half_height = self.display_surface.get_size()[1] // 2
         # init offset 
-		self.offset_cam = pygame.math.Vector2()
+        self.offset_cam = pygame.math.Vector2()
 
-		# creating the floor: loading png for background then place at (0,0)
-		self.floor_surf = pygame.image.load('../graphics/tilemap/zelda_ground2.png').convert()
-		self.floor_rect = self.floor_surf.get_rect(topleft = (0,0))
+        # creating the floor: loading png for background then place at (0,0)
+        self.floor_surf = pygame.image.load('../graphics/tilemap/zelda_ground2.png').convert()
+        self.floor_rect = self.floor_surf.get_rect(topleft=(0, 0))
         
     # blit stands for block transfer (copying pixels from one surface to another)
     # blit syntax: destination_surface.blit(source_surface, (x, y))
 
-	def custom_draw(self,player):
-		#getting offset from the player's pos (how much player moved from the center of the screen)
-		self.offset_cam.x = player.rect.centerx - self.half_width
-		self.offset_cam.y = player.rect.centery - self.half_height
+    def custom_draw(self, player):
+        # getting offset from the player's pos (how much player moved from the center of the screen)
+        self.offset_cam.x = player.rect.centerx - self.half_width
+        self.offset_cam.y = player.rect.centery - self.half_height
 
-		# drawing the floor (this is background image so it must be done before sprites)
-		floor_offset_pos = self.floor_rect.topleft - self.offset_cam
-		self.display_surface.blit(self.floor_surf,floor_offset_pos)
+        # drawing the floor (this is background image so it must be done before sprites)
+        floor_offset_pos = self.floor_rect.topleft - self.offset_cam
+        self.display_surface.blit(self.floor_surf, floor_offset_pos)
 
-		# for every sprite, offset it's position
-        # subtract player movement from it's pos so obstacles look like they're moving away
+        # for every sprite, offset its position
+        # subtract player movement from its pos so obstacles look like they're moving away
         # sorted accounts for what sprite should be drawn first
-		for sprite in sorted(self.sprites(),key = lambda sprite: sprite.rect.centery):
-			offset_pos = sprite.rect.topleft - self.offset_cam
-			self.display_surface.blit(sprite.image,offset_pos)
+        for sprite in sorted(self.sprites(), key=lambda sprite: sprite.rect.centery):
+            offset_pos = sprite.rect.topleft - self.offset_cam
+            self.display_surface.blit(sprite.image, offset_pos)
+    
+    def enemy_update(self, player):
+        enemy_sprites = [sprite for sprite in self.sprites() if hasattr(sprite, 'sprite_type') and sprite.sprite_type == 'enemy']
+        for sprite in enemy_sprites:
+             sprite.enemy_update(player)
+
+             
