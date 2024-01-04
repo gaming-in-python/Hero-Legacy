@@ -28,25 +28,20 @@ class Level:
         self.ui = UI()
 
     def create_map(self):
-        # Placing player in top left of map 
-        self.player = Player(
-             (650, 500), 
-             [self.visibles], 
-             self.obstacles, 
-             self.create_attack, 
-             self.destroy_attack,
-             self.create_magic)
-
         layouts = {
-            'boundary': import_csv_layout('../map/zelda_ground2_Border.csv'),
-            'grass' : import_csv_layout('../map/zelda_ground2_Grass.csv'),
-            'object': import_csv_layout('../map/zelda_ground2_Trees.csv'),
-            'entities': import_csv_layout('../map/zelda_ground2_Entities.csv')
+            # 'boundary': import_csv_layout('../map/zelda_ground2_Border.csv'),
+            # 'grass' : import_csv_layout('../map/zelda_ground2_Grass.csv'),
+            # 'object': import_csv_layout('../map/zelda_ground2_Trees.csv'),
+            # 'entities': import_csv_layout('../map/zelda_ground2_Entities.csv')
+            'boundary': import_csv_layout('../map/map_FloorBlocks.csv'),
+			'grass': import_csv_layout('../map/map_Grass.csv'),
+			'object': import_csv_layout('../map/map_Objects.csv'),
+			'entities': import_csv_layout('../map/map_Entities.csv')
         }
 
         graphics = {
             'grass' : import_folder('../graphics/Grass'),
-            'objects' : import_folder('../graphics/Grass')
+            'objects' : import_folder('../graphics/objects')
         }
 
         #first iteration is style = boundary and layout = returned list from import_csv_layout
@@ -61,11 +56,15 @@ class Level:
                             Tile((x,y), [self.obstacles], 'invisible')
                         if style == 'grass' :
                             #create grass tile with a random grass image surafce and make it an obstacle
-                            #random_grass_img = choice(graphics['grass'])
-                            Tile((x,y), [self.obstacles], 'grass')
+                            # random_grass_img = choice(graphics['grass'])
+                            # Tile((x,y), [self.obstacles], 'grass')
+                            random_grass_image = choice(graphics['grass'])
+                            Tile((x,y),[self.visibles,self.obstacles],'grass',random_grass_image)
                         if style == 'object' :
                             #surf = graphics['objects'][int(col)]
-                            Tile((x,y), [self.obstacles], 'object')
+                            #Tile((x,y), [self.obstacles], 'object')
+                            surf = graphics['objects'][int(col)]
+                            Tile((x,y),[self.visibles,self.obstacles],'object',surf)
                         if style == 'entities' :
                             if col == '394' :
                                   self.player = Player(
@@ -80,7 +79,7 @@ class Level:
                                  elif col == '391' : monster_name = 'spirit'
                                  elif col == '392' : monster_name = 'raccoon'
                                  else : monster_name = 'squid'
-                                 Enemy(monster_name, (x,y), [self.visibles])
+                                 Enemy(monster_name, (x,y), [self.visibles], self.obstacles)
                              
     
     def create_attack(self):
@@ -92,9 +91,9 @@ class Level:
          print(cost)
 
     def destroy_attack(self):
-         if self.current_attack:
+        if self.current_attack:
               self.current_attack.kill()
-              self.current_attack = None
+        self.current_attack = None
          
     def run(self):
         # update and draw the game
@@ -138,3 +137,5 @@ class YSortCameraGroup(pygame.sprite.Group):
 		for sprite in sorted(self.sprites(),key = lambda sprite: sprite.rect.centery):
 			offset_pos = sprite.rect.topleft - self.offset_cam
 			self.display_surface.blit(sprite.image,offset_pos)
+               
+    #def enemy_update()

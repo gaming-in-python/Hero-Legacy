@@ -37,18 +37,21 @@ class Enemy(Entity):
             self.animations[animation] = import_folder(main_path + animation)
 
     def update(self):
-        self.move(self.speed)
+        pass
+        #self.move(self.speed)
 
     def get_player_distance_direction(self,player) :
-        enemy_vec = #IN PROGESS
-        return (distance, direction)
+        pass
+        # enemy_vec = #IN PROGESS
+        # return (distance, direction)
 
     def get_status(self,player):
-        distance = ???
+        pass
+        # distance = ???
 
-        if distance <= self.attack_radius:
-            self.status = 'attack'
-        elif distance <= self.notice_radius:
-            self.status = 'move'
-        else :
-            self.status = 'idle'
+        # if distance <= self.attack_radius:
+        #     self.status = 'attack'
+        # elif distance <= self.notice_radius:
+        #     self.status = 'move'
+        # else :
+        #     self.status = 'idle'
