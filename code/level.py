@@ -7,6 +7,8 @@ from support import *
 from random import choice
 from weapon import Weapon
 from ui import UI
+from enemy import Enemy
+
 class Level:
     def __init__(self):
         # get the display surface 
@@ -38,7 +40,8 @@ class Level:
         layouts = {
             'boundary': import_csv_layout('../map/zelda_ground2_Border.csv'),
             'grass' : import_csv_layout('../map/zelda_ground2_Grass.csv'),
-            'object': import_csv_layout('../map/zelda_ground2_Trees.csv')
+            'object': import_csv_layout('../map/zelda_ground2_Trees.csv'),
+            'entities': import_csv_layout('../map/zelda_ground2_Entities.csv')
         }
 
         graphics = {
@@ -63,7 +66,22 @@ class Level:
                         if style == 'object' :
                             #surf = graphics['objects'][int(col)]
                             Tile((x,y), [self.obstacles], 'object')
-        
+                        if style == 'entities' :
+                            if col == '394' :
+                                  self.player = Player(
+                                       (x,y),
+                                       [self.visibles],
+                                       self.obstacles,
+                                       self.create_attack,
+                                       self.destroy_attack,
+                                       self.create_magic)
+                            else :
+                                 if col == '390' : monster_name = 'bamboo'
+                                 elif col == '391' : monster_name = 'spirit'
+                                 elif col == '392' : monster_name = 'raccoon'
+                                 else : monster_name = 'squid'
+                                 Enemy(monster_name, (x,y), [self.visibles])
+                             
     
     def create_attack(self):
          self.current_attack = Weapon(self.player, [self.visibles]) 

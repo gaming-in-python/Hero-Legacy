@@ -1,8 +1,9 @@
 import pygame 
 from settings import *
 from support import *
+from entity import Entity
 
-class Player(pygame.sprite.Sprite):
+class Player(Entity):
     def __init__(self, pos, groups, obstacles, create_attack, destroy_attack, create_magic):
         super().__init__(groups)
         self.image = pygame.image.load('../graphics/test/player.png').convert_alpha()
@@ -14,11 +15,10 @@ class Player(pygame.sprite.Sprite):
         #graphics setup
         self.import_player_assets()
         self.status = 'down' #default looking "downwards"
-        self.frame_index = 0
-        self.animation_speed = 0.15
-
+        
+        #inherits frame index, direction and animation speed from Entity
+        
         #movement variables to help control parsing the input
-        self.direction = pygame.math.Vector2()
         self.attacking = False
         self.attack_cooldown = 400
         self.attack_time = None
@@ -106,32 +106,8 @@ class Player(pygame.sprite.Sprite):
                 self.magic_idx =0
             self.magic = list(magic_data.keys())[self.magic_idx]
     
-    def move(self, speed):
-        if self.direction.magnitude() != 0: #vector of 0 cant be normalized!
-            # making sure magnitude of vector = 1 so player has same speed when moving diagonally
-            self.direction = self.direction.normalize()
-        self.hitbox.x += self.direction.x * speed
-        self.collision('horizontal')
-        self.hitbox.y += self.direction.y * speed
-        self.collision('vertical')
-        self.rect.center = self.hitbox.center
-
-    def collision(self, direction):
-        if direction == 'horizontal':
-            for sprite in self.obstacles:
-                if sprite.hitbox.colliderect(self.hitbox):
-                    if self.direction.x > 0: #moving right
-                        self.hitbox.right = sprite.hitbox.left
-                    if self.direction.x < 0: #moving left
-                        self.hitbox.left = sprite.hitbox.right
-        if direction == 'vertical':
-            for sprite in self.obstacles:
-                if sprite.hitbox.colliderect(self.hitbox):
-                    if self.direction.y > 0: #moving down
-                        self.hitbox.bottom = sprite.hitbox.top
-                    if self.direction.y < 0: #moving up
-                        self.hitbox.top = sprite.hitbox.bottom
-
+    #removed move and collision and put them in entity for Player class to inherit from
+            
     #getting all animation assets
     def import_player_assets(self):
         general_path = '../graphics/player/'
