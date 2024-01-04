@@ -45,7 +45,7 @@ class Level:
         }
 
         #first iteration is style = boundary and layout = returned list from import_csv_layout
-        for style, layout in layouts.items() :
+        for style, layout in layouts.items() : 
             for row_index,row in enumerate(layout): 
                 for col_index,col in enumerate(row) :
                     if col != '-1' :
@@ -99,43 +99,49 @@ class Level:
         # update and draw the game
         self.visibles.custom_draw(self.player)
         self.visibles.update()
+        self.visibles.enemy_update(self.player)
         debug(self.player.status)
         self.ui.display(self.player)
 
 # camera group - player is in middle of window by adding an offset to the player's pos
 # Y sort: sorting sprites by the y-coord
 class YSortCameraGroup(pygame.sprite.Group):
-	def __init__(self):
-		# general setup 
-		super().__init__()
+    def __init__(self):
+        # general setup 
+        super().__init__()
         # get pos for center of window, floored
-		self.display_surface = pygame.display.get_surface()
-		self.half_width = self.display_surface.get_size()[0] // 2
-		self.half_height = self.display_surface.get_size()[1] // 2
+        self.display_surface = pygame.display.get_surface()
+        self.half_width = self.display_surface.get_size()[0] // 2
+        self.half_height = self.display_surface.get_size()[1] // 2
         # init offset 
-		self.offset_cam = pygame.math.Vector2()
+        self.offset_cam = pygame.math.Vector2()
 
-		# creating the floor: loading png for background then place at (0,0)
-		self.floor_surf = pygame.image.load('../graphics/tilemap/zelda_ground2.png').convert()
-		self.floor_rect = self.floor_surf.get_rect(topleft = (0,0))
+        # creating the floor: loading png for background then place at (0,0)
+        self.floor_surf = pygame.image.load('../graphics/tilemap/zelda_ground2.png').convert()
+        self.floor_rect = self.floor_surf.get_rect(topleft=(0, 0))
         
     # blit stands for block transfer (copying pixels from one surface to another)
     # blit syntax: destination_surface.blit(source_surface, (x, y))
 
-	def custom_draw(self,player):
-		#getting offset from the player's pos (how much player moved from the center of the screen)
-		self.offset_cam.x = player.rect.centerx - self.half_width
-		self.offset_cam.y = player.rect.centery - self.half_height
+    def custom_draw(self, player):
+        # getting offset from the player's pos (how much player moved from the center of the screen)
+        self.offset_cam.x = player.rect.centerx - self.half_width
+        self.offset_cam.y = player.rect.centery - self.half_height
 
-		# drawing the floor (this is background image so it must be done before sprites)
-		floor_offset_pos = self.floor_rect.topleft - self.offset_cam
-		self.display_surface.blit(self.floor_surf,floor_offset_pos)
+        # drawing the floor (this is background image so it must be done before sprites)
+        floor_offset_pos = self.floor_rect.topleft - self.offset_cam
+        self.display_surface.blit(self.floor_surf, floor_offset_pos)
 
-		# for every sprite, offset it's position
-        # subtract player movement from it's pos so obstacles look like they're moving away
+        # for every sprite, offset its position
+        # subtract player movement from its pos so obstacles look like they're moving away
         # sorted accounts for what sprite should be drawn first
-		for sprite in sorted(self.sprites(),key = lambda sprite: sprite.rect.centery):
-			offset_pos = sprite.rect.topleft - self.offset_cam
-			self.display_surface.blit(sprite.image,offset_pos)
-               
-    #def enemy_update()
+        for sprite in sorted(self.sprites(), key=lambda sprite: sprite.rect.centery):
+            offset_pos = sprite.rect.topleft - self.offset_cam
+            self.display_surface.blit(sprite.image, offset_pos)
+    
+    def enemy_update(self, player):
+        enemy_sprites = [sprite for sprite in self.sprites() if hasattr(sprite, 'sprite_type') and sprite.sprite_type == 'enemy']
+        for sprite in enemy_sprites:
+             sprite.enemy_update(player)
+
+             
