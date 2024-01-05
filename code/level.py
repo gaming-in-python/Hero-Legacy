@@ -4,10 +4,11 @@ from tile import Tile
 from player import Player
 from debug import debug
 from support import *
-from random import choice
+from random import choice, randint
 from weapon import Weapon
 from ui import UI
 from enemy import Enemy
+from particles import AnimationPlayer
 
 class Level:
     def __init__(self):
@@ -27,6 +28,10 @@ class Level:
 
         #user interface
         self.ui = UI()
+
+        # particles
+        self.animation_player = AnimationPlayer()
+
 
     def create_map(self):
         layouts = {
@@ -85,7 +90,8 @@ class Level:
                                     (x,y), 
                                     [self.visibles,self.attackable], 
                                     self.obstacles,
-                                    self.damage_player)
+                                    self.damage_player,
+                                    self.trigger_death_particles)
                              
     
     def create_attack(self):
@@ -108,7 +114,12 @@ class Level:
                 if collision_sprites:
                     for target in collision_sprites:
                         if target.sprite_type == 'grass':
+                            pos = target.rect.center
+                            offset = pygame.math.Vector2(0,75)
+                            for leaf in range(randint(3,6)):
+                                self.animation_player.create_grass_particles(pos-offset,[self.visibles])
                             target.kill()
+
                         else:
                             target.get_damage(self.player, attack_sprite.sprite_type)
 
@@ -118,7 +129,11 @@ class Level:
             self.player.vulnerable = False
             self.player.hurt_time = pygame.time.get_ticks()
             #spawn particles
-         
+            self.animation_player.create_particles(attack_type, self.player.rect.center, [self.visibles])
+
+    def trigger_death_particles(self,pos,particle_type):
+        self.animation_player.create_particles(particle_type, pos,self.visibles)   
+    
     def run(self):
         # update and draw the game
         self.visibles.custom_draw(self.player)
