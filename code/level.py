@@ -9,6 +9,7 @@ from weapon import Weapon
 from ui import UI
 from enemy import Enemy
 from particles import AnimationPlayer
+from magic import MagicPlayer
 
 class Level:
     def __init__(self):
@@ -31,6 +32,7 @@ class Level:
 
         # particles
         self.animation_player = AnimationPlayer()
+        self.magic_player = MagicPlayer(self.animation_player)
 
 
     def create_map(self):
@@ -98,9 +100,14 @@ class Level:
          self.current_attack = Weapon(self.player, [self.visibles, self.attacking]) 
 
     def create_magic(self, style, strength, cost):
-         print(style)
-         print(strength)
-         print(cost)
+        if style == 'heal' :
+            self.magic_player.heal(self.player, strength, cost, [self.visibles])
+        
+        if style == 'flame' :
+            self.magic_player.flame(self.player, cost, [self.visibles, self.attacking])
+        #  print(style)
+        #  print(strength)
+        #  print(cost)
 
     def destroy_attack(self):
         if self.current_attack:
@@ -157,7 +164,7 @@ class YSortCameraGroup(pygame.sprite.Group):
         self.offset_cam = pygame.math.Vector2()
 
         # creating the floor: loading png for background then place at (0,0)
-        self.floor_surf = pygame.image.load('../graphics/tilemap/zelda_ground2.png').convert()
+        self.floor_surf = pygame.image.load('../graphics/tilemap/ground.png').convert()
         self.floor_rect = self.floor_surf.get_rect(topleft=(0, 0))
         
     # blit stands for block transfer (copying pixels from one surface to another)
