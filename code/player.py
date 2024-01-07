@@ -38,14 +38,17 @@ class Player(Entity):
         self.magic = list(magic_data.keys())[self.magic_idx]
         self.can_switch_magic = True
         self.magic_switch_time = None
-
+        
+        #stats
         #map each stat to a max value
-        self.stats = {'health': 100, 'energy': 60, 'attack': 10, 'magic': 4, 'speed': 6}
+        self.stats = {'health': 100, 'energy': 60, 'attack': 10, 'magic': 4, 'speed': 5}
+        self.max_stats = {'health': 300, 'energy': 140, 'attack': 20, 'magic': 10, 'speed': 10}
+        self.upgrade_cost = {'health': 100, 'energy': 100, 'attack': 100, 'magic': 100, 'speed': 100}
         #initialize values that will change to their max
         self.health = self.stats['health'] * 0.5
         self.energy = self.stats['energy'] * 0.8
         self.speed = self.stats['speed']
-        self.exp = 100
+        self.exp = 500
 
         #damage timer
         self.vulnerable = True
