@@ -19,10 +19,16 @@ UI_BG_COLOR = '#4d4b4b' #black
 UI_BORDER_COLOR = '#111111' #black
 TEXT_COLOR = '#EEEEEE' #white
 
+#ui colors
 HEALTH_COLOR = 'red'
 ENERGY_COLOR = 'blue'
 UI_BORDER_COLOR_ACTIVE = 'gold'
 
+#upgrade menu
+TEXT_COLOR_SELECTED = '#111111'
+BAR_COLOR = '#EEEEEE'
+BAR_COLOR_SELECTED =  '#111111'
+UPGRADE_BG_COLOR_SELECTED = '#EEEEEE'
 
 #weapons data
 weapon_data = {

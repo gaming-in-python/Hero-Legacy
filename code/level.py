@@ -10,11 +10,13 @@ from ui import UI
 from enemy import Enemy
 from particles import AnimationPlayer
 from magic import MagicPlayer
+from upgrade import Upgrade
 
 class Level:
     def __init__(self):
         # get the display surface 
         self.display_surface = pygame.display.get_surface()
+        self.game_paused = False
 
         #getting the sprites for obstacles+player
         self.visibles = YSortCameraGroup()
@@ -29,6 +31,7 @@ class Level:
 
         #user interface
         self.ui = UI()
+        self.upgrade = Upgrade(self.player)
 
         # particles
         self.animation_player = AnimationPlayer()
@@ -93,7 +96,8 @@ class Level:
                                     [self.visibles,self.attackable], 
                                     self.obstacles,
                                     self.damage_player,
-                                    self.trigger_death_particles)
+                                    self.trigger_death_particles,
+                                    self.add_xp)
                              
     
     def create_attack(self):
@@ -141,14 +145,24 @@ class Level:
     def trigger_death_particles(self,pos,particle_type):
         self.animation_player.create_particles(particle_type, pos,self.visibles)   
     
+    def add_xp(self,amount):
+        self.player.exp += amount
+
     def run(self):
-        # update and draw the game
         self.visibles.custom_draw(self.player)
-        self.visibles.update()
-        self.visibles.enemy_update(self.player)
-        self.player_attack_logic()
-        debug(self.player.status)
+        #draw the game
         self.ui.display(self.player)
+        if self.game_paused:
+            self.upgrade.display()
+        else:
+            # update the game
+            self.visibles.update()
+            self.visibles.enemy_update(self.player)
+            self.player_attack_logic()
+    
+    def toggle_menu(self):
+        self.game_paused = not self.game_paused
+        
 
 # camera group - player is in middle of window by adding an offset to the player's pos
 # Y sort: sorting sprites by the y-coord
@@ -191,4 +205,4 @@ class YSortCameraGroup(pygame.sprite.Group):
         for sprite in enemy_sprites:
              sprite.enemy_update(player)
 
-             
+    
