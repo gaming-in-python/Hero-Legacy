@@ -9,7 +9,7 @@ class Player(Entity):
         self.image = pygame.image.load('../graphics/test/player.png').convert_alpha()
         self.rect = self.image.get_rect(topleft = pos)
         # player hitbox
-        self.hitbox = self.rect.inflate(0, -26)
+        self.hitbox = self.rect.inflate(-6, HITBOX_OFFSET['player'])
         self.obstacles = obstacles
 
         #graphics setup
@@ -55,6 +55,9 @@ class Player(Entity):
         self.hurt_time = None
         self.invulnerability_duration = 500
 
+        # import a sound
+        self.weapon_attack_sound = pygame.mixer.Sound('../audio/sword.wav')
+        self.weapon_attack_sound.set_volume(0.4)
 
     # method to get keyboard input
     def input(self):
@@ -86,6 +89,7 @@ class Player(Entity):
             self.attack_time = pygame.time.get_ticks()
             #print("attack")
             self.create_attack()
+            self.weapon_attack_sound.play()
 
         #magic
         if keys[pygame.K_k] and not self.attacking:
@@ -216,12 +220,18 @@ class Player(Entity):
         else:
             self.energy = self.stats['energy']
 
+    def get_value_by_index(self, index):
+        return list(self.stats.values())[index]
+
+    def get_cost_by_index(self, index):
+        return list(self.upgrade_cost.values())[index]
+
     #updating all player variables
     def update(self):
         self.input()
         self.cooldowns()
         self.get_status()
         self.animate()
-        self.move(self.speed)
+        self.move(self.stats['speed'])
         self.energy_recovery()
     
